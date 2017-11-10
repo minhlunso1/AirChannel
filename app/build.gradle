@@ -13,12 +13,20 @@ android {
 
         buildConfigField("String", "API_URL", "\"${astroApiUrl}\"")
         buildConfigField("int", "DB_VERSION", "${dbVersion}")
+
+        jackOptions {
+            enabled true
+        }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -31,6 +39,7 @@ dependencies {
     compile "com.android.support:support-v4:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:recyclerview-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:support-annotations:$SUPPORT_LIBRARY_VERSION"
+    compile "com.android.support:cardview-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support.constraint:constraint-layout:$CONSTRAINT_LAYOUT_VERSION"
 
     compile "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
