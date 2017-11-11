@@ -35,4 +35,5 @@
     <dimen name="item_size_small">24dp</dimen>
     <dimen name="activity_horizontal_margin_small">8dp</dimen>
     <dimen name="activity_horizontal_margin_smaller">4dp</dimen>
+    <dimen name="rad_small">24dp</dimen>
 </resources>

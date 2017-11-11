@@ -19,4 +19,7 @@
     <string name="label_author">Author</string>
     <string name="author_name">Minh Nguyen</string>
     <string name="author_email">aminh1603@gmail.com</string>
+    <string name="action_sign_out">Sign Out</string>
+    <string name="alert_sign_in_successfully">Sign in successfully</string>
+    <string name="alert_signed_out">Signed out</string>
 </resources>

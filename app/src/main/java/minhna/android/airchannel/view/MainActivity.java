@@ -1,7 +1,9 @@
 package minhna.android.airchannel.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -13,6 +15,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.jakewharton.rxbinding.view.RxView;
 
 import java.util.ArrayList;
@@ -37,6 +49,8 @@ import minhna.android.airchannel.viewmodel.FavViewModel;
  */
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,
         FavViewModel.IFavViewMode{
+    private final int RC_SIGN_IN = 100;
+
     @BindView(R.id.fab)
     FloatingActionButton fab;
     @BindView(R.id.drawer_layout)
@@ -59,9 +73,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     RemoteManager remoteManager;
     @Inject
     LocalManager localManager;
-    List<Channel> list;
-    FavChannelAdapter adapter;
-    MenuItem navSSOAction;
+    private List<Channel> list;
+    private FavChannelAdapter adapter;
+    private MenuItem navSSOAction;
+    private FirebaseAuth mAuth;
+    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +87,72 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         this.getViewComponent().inject(this);
 
         setupView();
+        setupGoogleSSO();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mAuth != null) {
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            updateSSOUI(currentUser);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setupEvents();
+        setupFavList();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account);
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        showProgressDialog(null);
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, task -> {
+                    hideProgressDialog();
+                    if (task.isSuccessful()) {
+                        showSnackbar(fab, getString(R.string.alert_sign_in_successfully), Snackbar.LENGTH_SHORT);
+                        updateSSOUI(mAuth.getCurrentUser());
+                    } else
+                        showSnackbar(fab, task.getException().getMessage(), Snackbar.LENGTH_INDEFINITE);
+                });
+    }
+
+
+    private void updateSSOUI(FirebaseUser currentUser) {
+        if (currentUser == null) {
+            tvSSOInfo.setText(R.string.label_anonymous);
+            navSSOAction.setTitle(R.string.action_sign_in);
+        } else {
+            tvSSOInfo.setText(currentUser.getEmail());
+            navSSOAction.setTitle(R.string.action_sign_out);
+        }
+    }
+
+    private void setupGoogleSSO() {
+        mAuth = FirebaseAuth.getInstance();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
     private void setupView() {
@@ -83,13 +165,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         tvSSOInfo = headerView.findViewById(R.id.tv_sso_info);
         Menu navMenu = navigationView.getMenu();
         navSSOAction = navMenu.findItem(R.id.nav_sso);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setupEvents();
-        setupFavList();
     }
 
     private void setupFavList() {
@@ -165,10 +240,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_sso) {
+            if (item.getTitle().equals(getString(R.string.action_sign_in))) {
+                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                startActivityForResult(signInIntent, RC_SIGN_IN);
+            } else {
+                if (mAuth != null) {
+                    mAuth.signOut();
+                    showSnackbar(fab, getString(R.string.alert_signed_out), Snackbar.LENGTH_SHORT);
+                    updateSSOUI(null);
+                }
+            }
         }
 
         drawer.closeDrawer(GravityCompat.START);
-        return true;
+        return false;
     }
 
     private void setChannelList(List<Channel> list) {

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "922379308880",
+    "firebase_url": "https://airchannel-b983d.firebaseio.com",
+    "project_id": "airchannel-b983d",
+    "storage_bucket": "airchannel-b983d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:922379308880:android:d8d8de3002d16003",
+        "android_client_info": {
+          "package_name": "minhna.android.airchannel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "922379308880-eob75hivuc16pqvc5u85lg8khfjcgfv2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2fajJqmtx3ZOJH3YikwGugFm7mVdLw00"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

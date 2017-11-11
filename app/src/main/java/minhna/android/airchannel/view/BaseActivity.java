@@ -1,5 +1,6 @@
 package minhna.android.airchannel.view;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -25,6 +26,7 @@ public class BaseActivity extends AppCompatActivity {
     Toolbar toolbar;
     protected Snackbar snackbar;
     protected boolean canFinishMain;
+    protected ProgressDialog pDialog;
 
     private ViewComponent viewComponent;
 
@@ -38,6 +40,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setSupportActionBar(toolbar);
         canFinishMain = true;
+        setupDialog();
     }
 
     @Override
@@ -56,7 +59,25 @@ public class BaseActivity extends AppCompatActivity {
         return viewComponent;
     }
 
-    protected View.OnClickListener showErrorToast() {
-        return v -> Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show();
+    protected void showSnackbar(View view, String message, int length) {
+        if (snackbar != null && snackbar.isShown())
+            snackbar.dismiss();
+        snackbar = Snackbar.make(view, message, length);
+        snackbar.show();
+    }
+
+    protected void setupDialog() {
+        pDialog = new ProgressDialog(this, R.style.AppAlertDialogStyle);
+        pDialog.setMessage(getString(R.string.loading));
+    }
+
+    public void showProgressDialog(String message) {
+        if (message != null)
+            pDialog.setMessage(message);
+        pDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        pDialog.dismiss();
     }
 }
