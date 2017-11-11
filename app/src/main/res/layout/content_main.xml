@@ -109,4 +109,61 @@
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 
+    <android.support.v7.widget.CardView
+        android:id="@+id/cv_fav"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="3dp"
+        app:cardPreventCornerOverlap="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cv_tv_guide"
+        app:layout_constraintVertical_bias="0.012">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/ic_fav"
+                android:layout_width="@dimen/ic_size"
+                android:layout_height="@dimen/ic_size"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_horizontal_margin"
+                android:src="@mipmap/ic_fav" />
+
+            <TextView
+                android:id="@+id/tv_fav"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin_normal1"
+                android:layout_toEndOf="@+id/ic_fav"
+                android:text="@string/label_favorite"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/label_size"
+                android:textStyle="bold" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_fav"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ic_fav"
+                android:layout_marginTop="@dimen/activity_horizontal_margin_smaller"
+                android:layout_marginBottom="@dimen/activity_horizontal_margin"/>
+
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_dimen"
+            android:background="@color/colorAccent"
+            android:layout_gravity="bottom"/>
+    </android.support.v7.widget.CardView>
+
 </android.support.constraint.ConstraintLayout>

@@ -10,32 +10,32 @@ import java.util.List;
 
 import minhna.android.airchannel.data.local.LocalManager;
 import minhna.android.airchannel.data.model.Channel;
-import minhna.android.airchannel.databinding.ItemChannelBinding;
-import minhna.android.airchannel.viewmodel.ChannelViewModel;
+import minhna.android.airchannel.databinding.ItemFavBinding;
+import minhna.android.airchannel.viewmodel.FavViewModel;
 
 /**
  * Created by Minh on 11/11/2017.
  */
 
-public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelViewHolder> {
+public class FavChannelAdapter extends RecyclerView.Adapter<FavChannelAdapter.ChannelViewHolder> {
     private List<Channel> list;
     private LocalManager localManager;
 
-    public ChannelAdapter(List<Channel> list, LocalManager localManager) {
+    public FavChannelAdapter(List<Channel> list, LocalManager localManager) {
         this.list = list;
         this.localManager = localManager;
     }
 
     @Override
     public ChannelViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ItemChannelBinding binding = ItemChannelBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        ItemFavBinding binding = ItemFavBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new ChannelViewHolder(binding.getRoot());
     }
 
     @Override
     public void onBindViewHolder(ChannelViewHolder holder, int position) {
         final Channel channel = list.get(holder.getAdapterPosition());
-        holder.binding.setObj(new ChannelViewModel(position, channel, localManager));
+        holder.binding.setObj(new FavViewModel(position, channel, localManager));
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelV
     }
 
     public class ChannelViewHolder extends RecyclerView.ViewHolder {
-        final ItemChannelBinding binding;
+        final ItemFavBinding binding;
 
         public ChannelViewHolder(View rootView) {
             super(rootView);

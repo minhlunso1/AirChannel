@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -19,13 +18,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import minhna.android.airchannel.R;
 import minhna.android.airchannel.adapter.ChannelAdapter;
 import minhna.android.airchannel.data.local.LocalManager;
 import minhna.android.airchannel.data.net.RemoteManager;
-import minhna.android.airchannel.data.pojo.Channel;
+import minhna.android.airchannel.data.model.Channel;
 import minhna.android.airchannel.view.custom.FabSheetView;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -36,12 +34,6 @@ import minhna.android.airchannel.databinding.ActivityChannelBinding;
  */
 
 public class ChannelActivity extends BaseActivity {
-    @BindView(R.id.rv_channel)
-    RecyclerView rvChannel;
-    @BindView(R.id.cv_channel)
-    View cvChannel;
-    @BindView(R.id.pb)
-    ContentLoadingProgressBar pb;
     FabSheetView fabSheet;
 
     @Inject
@@ -82,8 +74,8 @@ public class ChannelActivity extends BaseActivity {
     private void loadChannels() {
         list = new ArrayList<>();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        rvChannel.setLayoutManager(layoutManager);
-        cvChannel.setVisibility(View.INVISIBLE);
+        binding.contentChannel.rvChannel.setLayoutManager(layoutManager);
+        binding.contentChannel.cvChannel.setVisibility(View.INVISIBLE);
 
         remoteManager.getChannels()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -94,23 +86,23 @@ public class ChannelActivity extends BaseActivity {
                     return list;
                 })
                 .takeUntil(preDestroy())
-                .doOnSubscribe(() -> pb.show())
+                .doOnSubscribe(() -> binding.contentChannel.pb.show())
                 .subscribe(channels -> {
-                    pb.hide();
-                    cvChannel.setVisibility(View.VISIBLE);
+                    binding.contentChannel.pb.hide();
+                    binding.contentChannel.cvChannel.setVisibility(View.VISIBLE);
                     list.addAll(channels);
                     list = formatList(list);
                     setChannelList(list);
                 }, error -> {
-                    pb.hide();
+                    binding.contentChannel.pb.hide();
                     error.printStackTrace();
                     toggleSnackbar(true, error.getMessage());
                 });
     }
 
     private void setChannelList(List<Channel> list) {
-        ChannelAdapter adapter = new ChannelAdapter(this, list, null);
-        rvChannel.setAdapter(adapter);
+        ChannelAdapter adapter = new ChannelAdapter(list, localManager);
+        binding.contentChannel.rvChannel.setAdapter(adapter);
     }
 
     private List<Channel> formatList(List<Channel> list) {

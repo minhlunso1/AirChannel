@@ -1,6 +1,6 @@
 package minhna.android.airchannel.data.net;
 
-import minhna.android.airchannel.data.pojo.ChannelResponse;
+import minhna.android.airchannel.data.model.ChannelResponse;
 import retrofit2.http.GET;
 import rx.Single;
 

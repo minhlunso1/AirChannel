@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable name="obj" type="minhna.android.airchannel.viewmodel.FavViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_tiny"
+        android:layout_marginBottom="@dimen/margin_tiny">
+
+        <TextView
+            android:id="@+id/tv_display_channel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{obj.channelId + obj.channelTitle}"
+            android:layout_marginTop="@dimen/margin_tiny"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin_normal1"
+            android:textColor="@color/black"
+            android:textSize="@dimen/item_textview_normal" />
+
+        <ImageView
+            android:id="@+id/img_delete"
+            android:layout_width="@dimen/item_size_small"
+            android:layout_height="@dimen/item_size_small"
+            app:srcCompat="@mipmap/ic_remove"
+            android:onClick="@{obj.onRemoveClick}"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+
+</layout>

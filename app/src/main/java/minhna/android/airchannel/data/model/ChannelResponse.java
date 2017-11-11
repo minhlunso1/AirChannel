@@ -1,4 +1,4 @@
-package minhna.android.airchannel.data.pojo;
+package minhna.android.airchannel.data.model;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -3,7 +3,7 @@ package minhna.android.airchannel.data.net;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import minhna.android.airchannel.data.pojo.ChannelResponse;
+import minhna.android.airchannel.data.model.ChannelResponse;
 import rx.Single;
 
 /**

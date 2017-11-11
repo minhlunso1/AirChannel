@@ -35,7 +35,7 @@
         </android.support.design.widget.AppBarLayout>
 
         <include layout="@layout/content_channel"
-            android:id="@+id/content_container"/>
+            android:id="@+id/content_channel"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_sort"

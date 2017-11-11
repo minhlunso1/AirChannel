@@ -14,7 +14,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import minhna.android.airchannel.data.pojo.Channel;
+import minhna.android.airchannel.data.model.Channel;
 import minhna.android.airchannel.injection.annotation.ApplicationContext;
 import minhna.android.airchannel.injection.annotation.DatabaseInfo;
 
@@ -127,5 +127,11 @@ public class DBHelper extends SQLiteOpenHelper {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    public boolean deleteChannel(int id) throws Exception
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.delete(FAV_CHANNEL_TABLE_NAME, FAV_COLUMN_CHANNEL_ID + "=" + id, null) > 0;
     }
 }

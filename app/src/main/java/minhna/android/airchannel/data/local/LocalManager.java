@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import minhna.android.airchannel.app.AK;
-import minhna.android.airchannel.data.pojo.Channel;
+import minhna.android.airchannel.data.model.Channel;
 import minhna.android.airchannel.injection.annotation.ApplicationContext;
 
 /**
@@ -20,7 +20,7 @@ import minhna.android.airchannel.injection.annotation.ApplicationContext;
 public class LocalManager {
     private DBHelper mDbHelper;
     private AP mSharedPrefsHelper;
-    private HashMap<String, Channel> favChannelMap;
+    private HashMap<Integer, Channel> favChannelMap;
 
     @Inject
     public LocalManager(@ApplicationContext Context context, DBHelper dbHelper, AP sharedPrefsHelper) {
@@ -38,6 +38,10 @@ public class LocalManager {
 
     public Long createChannel(Channel user) throws Exception {
         return mDbHelper.insertChannel(user);
+    }
+
+    public boolean deleteChannel(int id) throws Exception {
+        return mDbHelper.deleteChannel(id);
     }
 
     public List<Channel> getFavChannelList() throws NullPointerException {
