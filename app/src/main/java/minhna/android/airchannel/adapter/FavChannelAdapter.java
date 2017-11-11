@@ -20,10 +20,12 @@ import minhna.android.airchannel.viewmodel.FavViewModel;
 public class FavChannelAdapter extends RecyclerView.Adapter<FavChannelAdapter.ChannelViewHolder> {
     private List<Channel> list;
     private LocalManager localManager;
+    private FavViewModel.IFavViewMode iFavViewMode;
 
-    public FavChannelAdapter(List<Channel> list, LocalManager localManager) {
+    public FavChannelAdapter(List<Channel> list, LocalManager localManager, FavViewModel.IFavViewMode iFavViewMode) {
         this.list = list;
         this.localManager = localManager;
+        this.iFavViewMode = iFavViewMode;
     }
 
     @Override
@@ -35,7 +37,7 @@ public class FavChannelAdapter extends RecyclerView.Adapter<FavChannelAdapter.Ch
     @Override
     public void onBindViewHolder(ChannelViewHolder holder, int position) {
         final Channel channel = list.get(holder.getAdapterPosition());
-        holder.binding.setObj(new FavViewModel(position, channel, localManager));
+        holder.binding.setObj(new FavViewModel(position, channel, localManager, iFavViewMode));
     }
 
     @Override

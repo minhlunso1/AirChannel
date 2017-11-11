@@ -13,14 +13,16 @@ import minhna.android.airchannel.data.model.Channel;
 
 public class FavViewModel extends BaseViewModel {
     private Channel channel;
+    private IFavViewMode iFavViewMode;
 
     public interface IFavViewMode {
-        void onRemove(int channelId, int position);
+        void onRemoveFav(int channelId, int position);
     }
 
-    public FavViewModel(int position, Channel channel, LocalManager localManager) {
+    public FavViewModel(int position, Channel channel, LocalManager localManager, IFavViewMode iFavViewMode) {
         super(position, localManager);
         this.channel = channel;
+        this.iFavViewMode = iFavViewMode;
     }
 
     public String getChannelTitle() {
@@ -39,12 +41,13 @@ public class FavViewModel extends BaseViewModel {
     public View.OnClickListener onRemoveClick() {
         return view -> {
             try {
-                if (localManager.deleteChannel(getChannelId()))
+                if (localManager.deleteChannel(getChannelId())) {
                     localManager.getFavChannelMap().remove(getChannelId());
+                    iFavViewMode.onRemoveFav(getChannelId(), position);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         };
     }
-
 }

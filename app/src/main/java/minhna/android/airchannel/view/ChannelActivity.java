@@ -55,7 +55,6 @@ public class ChannelActivity extends BaseActivity {
         ButterKnife.bind(this);
         super.onCreate(savedInstanceState);
         this.getViewComponent().inject(this);
-        canFinishMain = true;
         setupView();
         loadChannels();
     }

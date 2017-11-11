@@ -13,4 +13,10 @@
     <string name="action_sort_id">Sort by ID</string>
     <string name="action_sort_name">Sort by Name</string>
     <string name="label_favorite">Favorite</string>
+    <string name="label_google_sso">Google SSO</string>
+    <string name="label_anonymous">Anonymous</string>
+    <string name="action_sign_in">Sign In</string>
+    <string name="label_author">Author</string>
+    <string name="author_name">Minh Nguyen</string>
+    <string name="author_email">aminh1603@gmail.com</string>
 </resources>
