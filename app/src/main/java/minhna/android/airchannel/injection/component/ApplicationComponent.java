@@ -10,6 +10,8 @@ import minhna.android.airchannel.app.AirChannelApplication;
 import minhna.android.airchannel.data.local.AP;
 import minhna.android.airchannel.data.local.DBHelper;
 import minhna.android.airchannel.data.local.LocalManager;
+import minhna.android.airchannel.data.net.RemoteInterface;
+import minhna.android.airchannel.data.net.RemoteManager;
 import minhna.android.airchannel.injection.annotation.ApplicationContext;
 import minhna.android.airchannel.injection.module.ApplicationModule;
 
@@ -28,4 +30,6 @@ public interface ApplicationComponent {
     LocalManager localManager();
     AP AP();
     DBHelper DBHelper();
+    RemoteManager remoteManager();
+    RemoteInterface remoteInterface();
 }

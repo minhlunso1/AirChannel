@@ -2,6 +2,7 @@ package minhna.android.airchannel.view;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -22,6 +23,8 @@ import rx.subjects.BehaviorSubject;
 public class BaseActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    protected Snackbar snackbar;
+    protected boolean canFinishMain;
 
     private ViewComponent viewComponent;
 

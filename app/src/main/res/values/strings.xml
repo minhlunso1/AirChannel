@@ -9,4 +9,7 @@
     <string name="label_channel">Channel</string>
     <string name="label_tv_guide">TV Guide</string>
     <string name="error">Error</string>
+    <string name="loading">Loading</string>
+    <string name="action_sort_id">Sort by ID</string>
+    <string name="action_sort_name">Sort by Name</string>
 </resources>

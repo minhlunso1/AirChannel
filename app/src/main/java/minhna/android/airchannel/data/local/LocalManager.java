@@ -2,6 +2,7 @@ package minhna.android.airchannel.data.local;
 
 import android.content.Context;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -17,14 +18,12 @@ import minhna.android.airchannel.injection.annotation.ApplicationContext;
 
 @Singleton
 public class LocalManager {
-
-    private Context mContext;
     private DBHelper mDbHelper;
     private AP mSharedPrefsHelper;
+    private HashMap<String, Channel> favChannelMap;
 
     @Inject
     public LocalManager(@ApplicationContext Context context, DBHelper dbHelper, AP sharedPrefsHelper) {
-        mContext = context;
         mDbHelper = dbHelper;
         mSharedPrefsHelper = sharedPrefsHelper;
     }
@@ -43,5 +42,11 @@ public class LocalManager {
 
     public List<Channel> getFavChannelList() throws NullPointerException {
         return mDbHelper.getAllChannel();
+    }
+
+    public HashMap getFavChannelMap() {
+        if (favChannelMap == null)
+            favChannelMap = new HashMap<>();
+        return favChannelMap;
     }
 }

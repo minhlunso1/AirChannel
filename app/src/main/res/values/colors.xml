@@ -7,4 +7,5 @@
     <color name="colorFeature1">#b23f73</color>
     <color name="colorFeature2">#ff6f6f</color>
     <color name="colorFeature3">#404148</color>
+    <color name="black">@android:color/black</color>
 </resources>

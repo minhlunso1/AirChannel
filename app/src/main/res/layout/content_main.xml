@@ -57,6 +57,11 @@
                 android:textSize="@dimen/label_size"
                 android:textStyle="bold"
                 android:text="@string/label_channel"/>
+            <View
+                android:layout_width="@dimen/divider_dimen"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:background="@color/colorFeature2"/>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 
@@ -96,6 +101,11 @@
                 android:textSize="@dimen/label_size"
                 android:textStyle="bold"
                 android:text="@string/label_tv_guide"/>
+            <View
+                android:layout_width="@dimen/divider_dimen"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:background="@color/colorFeature1"/>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 

@@ -9,6 +9,8 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import minhna.android.airchannel.BuildConfig;
+import minhna.android.airchannel.data.net.RemoteFactory;
+import minhna.android.airchannel.data.net.RemoteInterface;
 import minhna.android.airchannel.injection.annotation.ApplicationContext;
 import minhna.android.airchannel.injection.annotation.DatabaseInfo;
 
@@ -49,7 +51,14 @@ public class ApplicationModule {
     }
 
     @Provides
+    @Singleton
     SharedPreferences provideSharedPrefs() {
         return mApplication.getSharedPreferences(BuildConfig.APPLICATION_ID , Context.MODE_PRIVATE);
+    }
+
+    @Provides
+    @Singleton
+    RemoteInterface provideBourbonService() {
+        return RemoteFactory.buildRemoteInterface();
     }
 }

@@ -74,7 +74,7 @@ public class DBHelper extends SQLiteOpenHelper {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 Channel channel = new Channel();
-                channel.setChannelId(cursor.getLong(cursor.getColumnIndex(FAV_COLUMN_CHANNEL_ID)));
+                channel.setChannelId(cursor.getInt(cursor.getColumnIndex(FAV_COLUMN_CHANNEL_ID)));
                 channel.setChannelTitle(cursor.getString(cursor.getColumnIndex(FAV_COLUMN_CHANNEL_TITLE)));
                 return channel;
             } else {
@@ -99,7 +99,7 @@ public class DBHelper extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     Channel channel = new Channel();
-                    channel.setChannelId(cursor.getLong(cursor.getColumnIndex(FAV_COLUMN_CHANNEL_ID)));
+                    channel.setChannelId(cursor.getInt(cursor.getColumnIndex(FAV_COLUMN_CHANNEL_ID)));
                     channel.setChannelTitle(cursor.getString(cursor.getColumnIndex(FAV_COLUMN_CHANNEL_TITLE)));
 
                     list.add(channel);
