@@ -1,12 +1,18 @@
 package minhna.android.airchannel.data.net;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import minhna.android.airchannel.app.AK;
+import minhna.android.airchannel.data.local.LocalManager;
+import minhna.android.airchannel.data.model.Channel;
 import minhna.android.airchannel.data.model.ChannelResponse;
+import minhna.android.airchannel.data.model.Profile;
 import rx.Single;
 
 /**
@@ -17,6 +23,8 @@ import rx.Single;
 public class RemoteManager {
     private final RemoteInterface remoteInterface;
     private DatabaseReference firebaseRemote;
+    @Inject
+    FirebaseAuth mAuth;
 
     @Inject
     public RemoteManager(RemoteInterface remoteInterface) {
@@ -33,5 +41,26 @@ public class RemoteManager {
             firebaseRemote = FirebaseDatabase.getInstance().getReference();
         }
         return firebaseRemote;
+    }
+
+    public void updateProfile(Profile profile) {
+        if (mAuth.getCurrentUser() != null)
+            getFirebaseRemote().child(mAuth.getCurrentUser().getUid())
+                    .child(AK.PROFILE).setValue(profile);
+    }
+
+    public Query getFavChannelQuery(String channelField) {
+        return getFirebaseRemote().child(mAuth.getCurrentUser().getUid()).child(AK.FAV_LIST)
+                .orderByChild(channelField);
+    }
+
+    public void removeFavoriteChannel(String channelId) {
+        getFirebaseRemote().child(mAuth.getCurrentUser().getUid())
+                .child(AK.FAV_LIST).child(channelId).removeValue();
+    }
+
+    public void insertChannel(Channel channel) {
+        getFirebaseRemote().child(mAuth.getCurrentUser().getUid())
+                .child(AK.FAV_LIST).child(String.valueOf(channel.getChannelId())).setValue(channel);
     }
 }

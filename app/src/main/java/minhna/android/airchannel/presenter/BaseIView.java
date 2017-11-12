@@ -1,4 +1,4 @@
-package minhna.android.airchannel.view.presenter;
+package minhna.android.airchannel.presenter;
 
 /**
  * Created by Minh on 11/12/2017.

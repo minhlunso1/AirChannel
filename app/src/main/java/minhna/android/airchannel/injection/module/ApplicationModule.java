@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -21,9 +23,11 @@ import minhna.android.airchannel.injection.annotation.DatabaseInfo;
 @Module
 public class ApplicationModule {
     protected final Application mApplication;
+    protected FirebaseAuth mAuth;
 
-    public ApplicationModule(Application application) {
+    public ApplicationModule(Application application, FirebaseAuth firebaseAuth) {
         mApplication = application;
+        mAuth = firebaseAuth;
     }
 
     @Provides
@@ -60,5 +64,11 @@ public class ApplicationModule {
     @Singleton
     RemoteInterface provideBourbonService() {
         return RemoteFactory.buildRemoteInterface();
+    }
+
+    @Provides
+    @Singleton
+    FirebaseAuth provideAuth() {
+        return mAuth;
     }
 }

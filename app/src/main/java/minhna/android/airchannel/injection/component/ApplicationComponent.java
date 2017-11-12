@@ -3,6 +3,8 @@ package minhna.android.airchannel.injection.component;
 import android.app.Application;
 import android.content.Context;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -32,4 +34,5 @@ public interface ApplicationComponent {
     DBHelper DBHelper();
     RemoteManager remoteManager();
     RemoteInterface remoteInterface();
+    FirebaseAuth mAuth();
 }

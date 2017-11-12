@@ -1,4 +1,4 @@
-package minhna.android.airchannel.view.presenter;
+package minhna.android.airchannel.presenter;
 
 import android.content.Context;
 
@@ -16,6 +16,7 @@ public class BasePresenter {
         return preDestroy;
     }
 
+    //In this test, I use this to prevent memory leaking
     public void onDestroy() {
         preDestroy.onNext(this);
         context = null;

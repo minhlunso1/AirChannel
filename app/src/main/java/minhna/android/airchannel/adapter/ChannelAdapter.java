@@ -10,6 +10,7 @@ import java.util.List;
 
 import minhna.android.airchannel.data.local.LocalManager;
 import minhna.android.airchannel.data.model.Channel;
+import minhna.android.airchannel.data.net.RemoteManager;
 import minhna.android.airchannel.databinding.ItemChannelBinding;
 import minhna.android.airchannel.viewmodel.ChannelViewModel;
 
@@ -20,10 +21,12 @@ import minhna.android.airchannel.viewmodel.ChannelViewModel;
 public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelViewHolder> {
     private List<Channel> list;
     private LocalManager localManager;
+    private RemoteManager remoteManager;
 
-    public ChannelAdapter(List<Channel> list, LocalManager localManager) {
+    public ChannelAdapter(List<Channel> list, LocalManager localManager, RemoteManager remoteManager) {
         this.list = list;
         this.localManager = localManager;
+        this.remoteManager = remoteManager;
     }
 
     @Override
@@ -35,7 +38,8 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelV
     @Override
     public void onBindViewHolder(ChannelViewHolder holder, int position) {
         Channel channel = list.get(holder.getAdapterPosition());
-        holder.binding.setObj(new ChannelViewModel(holder.getAdapterPosition(), channel, localManager));
+        holder.binding.setObj(new ChannelViewModel(holder.getAdapterPosition(), channel, localManager,
+                remoteManager));
     }
 
     @Override

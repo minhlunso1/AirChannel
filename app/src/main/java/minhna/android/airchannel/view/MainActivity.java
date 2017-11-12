@@ -43,8 +43,8 @@ import minhna.android.airchannel.data.model.Profile;
 import minhna.android.airchannel.data.model.SortType;
 import minhna.android.airchannel.data.net.RemoteManager;
 import minhna.android.airchannel.view.custom.FabSheetView;
-import minhna.android.airchannel.view.presenter.BasePresenter;
-import minhna.android.airchannel.view.presenter.PresenterMain;
+import minhna.android.airchannel.presenter.BasePresenter;
+import minhna.android.airchannel.presenter.PresenterMain;
 import minhna.android.airchannel.viewmodel.FavViewModel;
 
 /**
@@ -77,12 +77,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     RemoteManager remoteManager;
     @Inject
     LocalManager localManager;
+    @Inject
+    FirebaseAuth mAuth;
     private List<Channel> list = new ArrayList<>();
     private FavChannelAdapter adapter;
     private MenuItem navSSOAction;
-    private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
     private PresenterMain presenter;
+    private boolean canGetList = true;
 
     @Override
     protected BasePresenter initPresenter() {
@@ -114,10 +116,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onStart() {
         super.onStart();
-        if (mAuth != null && mAuth.getCurrentUser() != null) {
+        if (mAuth != null) {
             FirebaseUser currentUser = mAuth.getCurrentUser();
             updateSSOUI(currentUser);
-            presenter.setupProfile(mAuth);
+            if (currentUser != null)
+                presenter.setupProfile(mAuth);
         }
     }
 
@@ -125,7 +128,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onResume() {
         super.onResume();
         setupEvents();
-        presenter.getFavList(mAuth);
+        if (canGetList)
+            presenter.getFavList();
     }
 
     @Override
@@ -137,8 +141,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
+                canGetList = false;
             } catch (ApiException e) {
                 e.printStackTrace();
+                showSnackbar(fab, getString(R.string.suggest_update_google), Snackbar.LENGTH_LONG);
             }
         }
     }
@@ -177,7 +183,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void setupGoogleSSO() {
-        mAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -212,9 +217,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void setupEvents() {
+        //Faster when start activity from outsite activity so I use RxBinding
         RxView.clicks(rlChannel)
                 .takeUntil(preDestroy())
-                .subscribe(aVoid -> ChannelActivity.go(getBaseContext()));
+                .subscribe(aVoid -> startNewTaskWith(this, ChannelActivity.class));
+        RxView.clicks(cvTVGuide)
+                .takeUntil(preDestroy())
+                .subscribe(aVoid -> startNewTaskWith(this, OnAirActivity.class));
         fab.setOnClickListener(view -> {
             canFinishMain = false;
             if (fabSheet == null) {
@@ -226,7 +235,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
                 sortId.setOnClickListener(v1 -> {
                     if (mAuth != null && mAuth.getCurrentUser() != null && localManager.getProfile() != null)
-                        presenter.updateSortType(SortType.ID, mAuth);
+                        presenter.updateSortType(SortType.ID);
                     if (fabSheet != null)
                         fabSheet.dismiss();
                     canFinishMain = true;
@@ -235,7 +244,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 });
                 sortName.setOnClickListener(v1 -> {
                     if (mAuth != null && mAuth.getCurrentUser() != null && localManager.getProfile() != null)
-                        presenter.updateSortType(SortType.NAME, mAuth);
+                        presenter.updateSortType(SortType.NAME);
                     if (fabSheet != null)
                         fabSheet.dismiss();
                     canFinishMain = true;
@@ -282,7 +291,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void setChannelList(List<Channel> list) {
-        adapter = new FavChannelAdapter(list, localManager, this);
+        adapter = new FavChannelAdapter(list, localManager, remoteManager,this);
         rvFav.setAdapter(adapter);
     }
 

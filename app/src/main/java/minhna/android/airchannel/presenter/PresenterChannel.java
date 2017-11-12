@@ -1,7 +1,6 @@
-package minhna.android.airchannel.view.presenter;
+package minhna.android.airchannel.presenter;
 
 import android.content.Context;
-import android.view.View;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,10 +16,8 @@ import rx.schedulers.Schedulers;
  * Created by Minh on 11/12/2017.
  */
 
-public class PresenterChannel extends BasePresenter {
+public class PresenterChannel extends BaseDataPresenter {
     private IChannel iView;
-    private LocalManager localManager;
-    private RemoteManager remoteManager;
 
     public interface IChannel extends BaseIView {
         void onLoadChannelDone(List<Channel> list, boolean fromRemote);
@@ -32,24 +29,36 @@ public class PresenterChannel extends BasePresenter {
         this.iView = iView;
     }
 
+    @Override
     public void bindComponent(LocalManager localManager, RemoteManager remoteManager) {
-        this.localManager = localManager;
-        this.remoteManager = remoteManager;
+        super.bindComponent(localManager, remoteManager);
     }
 
     public void loadChannelsFromServer() {
+        if (localManager.getChannelList().size() > 0) {//load local first for better UX
+            List<Channel> list = localManager.getChannelList();
+            if (localManager.getProfile() != null)
+                Collections.sort(list, Channel.getChannelComparator(localManager.getProfile().getSortType()));
+            list = formatList(list);
+            iView.onLoadChannelDone(list, false);
+        }
         remoteManager.getChannels()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .map(response -> {
                     List<Channel> list = response.channels;
-                    Collections.sort(list, Channel.IDComparator);
+                    if (localManager.getProfile() != null)
+                        Collections.sort(list, Channel.getChannelComparator(localManager.getProfile().getSortType()));
                     return list;
                 })
                 .takeUntil(preDestroy())
-                .doOnSubscribe(() -> iView.onLoadingChannel())
+                .doOnSubscribe(() -> {
+                    if (localManager.getChannelList().size() ==0)
+                        iView.onLoadingChannel();
+                })
                 .subscribe(channels -> {
                     channels = formatList(channels);
+                    localManager.setChannelList(channels);
                     iView.onLoadChannelDone(channels, true);
                 }, error -> {
                     iView.onError(error.getMessage());
@@ -71,7 +80,5 @@ public class PresenterChannel extends BasePresenter {
     public void onDestroy() {
         super.onDestroy();
         iView = null;
-        localManager = null;
-        remoteManager = null;
     }
 }

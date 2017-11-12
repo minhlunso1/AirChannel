@@ -1,5 +1,6 @@
 package minhna.android.airchannel.data.model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import minhna.android.airchannel.R;
  * Created by Minh on 11/9/2017.
  */
 
+@IgnoreExtraProperties
 public class Channel implements Serializable {
     @SerializedName("channelId")
     private int channelId;
@@ -43,13 +45,6 @@ public class Channel implements Serializable {
         this.channelTitle = channelTitle;
     }
 
-    public boolean isFav() {
-        if (imgFavRes == R.mipmap.ic_on_fav)
-            return true;
-        else
-            return false;
-    }
-
     public static String getChannelField(@SortType int type) {
         String returnStr = "";
         switch (type) {
@@ -62,6 +57,7 @@ public class Channel implements Serializable {
         }
         return returnStr;
     }
+
     public static Comparator<Channel> getChannelComparator(@SortType int type) {
         Comparator<Channel> returnValue = IDComparator;
         switch (type) {

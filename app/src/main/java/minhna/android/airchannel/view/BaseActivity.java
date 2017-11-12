@@ -1,7 +1,10 @@
 package minhna.android.airchannel.view;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +17,7 @@ import minhna.android.airchannel.app.AirChannelApplication;
 import minhna.android.airchannel.injection.component.DaggerViewComponent;
 import minhna.android.airchannel.injection.component.ViewComponent;
 import minhna.android.airchannel.injection.module.ActivityModule;
-import minhna.android.airchannel.view.presenter.BasePresenter;
+import minhna.android.airchannel.presenter.BasePresenter;
 import rx.subjects.BehaviorSubject;
 
 /**
@@ -68,8 +71,22 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void showSnackbar(View view, String message, int length) {
         if (snackbar != null && snackbar.isShown())
             snackbar.dismiss();
+        if (message == null || message.isEmpty())
+            message = getString(R.string.suggest_check_network);
         snackbar = Snackbar.make(view, message, length);
         snackbar.show();
+    }
+
+    protected void toggleSnackbar(View view, boolean toShow, String message) {
+        if (toShow) {
+            snackbar = Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE);
+            snackbar.show();
+        } else {
+            if (snackbar != null && snackbar.isShown())
+                new Handler().postDelayed(() -> {
+                    snackbar.dismiss();
+                }, 500);
+        }
     }
 
     protected void setupDialog() {
@@ -85,5 +102,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void hideProgressDialog() {
         pDialog.dismiss();
+    }
+
+    public static void startNewTaskWith(Context context, Class activity) {
+        Intent intent = new Intent(context, activity);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 }

@@ -29,6 +29,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".view.OnAirActivity"
+            android:label="@string/label_tv_guide"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package minhna.android.airchannel.data.local;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class LocalManager {
     private AP mSharedPrefsHelper;
     private HashMap<Integer, Channel> favChannelMap;
     private Profile profile;
+    private List<Channel> channelList;
 
     @Inject
     public LocalManager(@ApplicationContext Context context, DBHelper dbHelper, AP sharedPrefsHelper) {
@@ -47,7 +49,7 @@ public class LocalManager {
         return mSharedPrefsHelper.getIntData(AK.SORT_TYPE);
     }
 
-    public Long createChannel(Channel user) throws Exception {
+    public Long insertChannel(Channel user) throws Exception {
         return mDbHelper.insertChannel(user);
     }
 
@@ -82,5 +84,15 @@ public class LocalManager {
 
     public void setProfile(Profile profile) {
         this.profile = profile;
+    }
+
+    public List<Channel> getChannelList() {
+        if (channelList == null)
+            channelList = new ArrayList<>();
+        return channelList;
+    }
+
+    public void setChannelList(List<Channel> channelList) {
+        this.channelList = channelList;
     }
 }

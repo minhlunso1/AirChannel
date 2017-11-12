@@ -1,4 +1,4 @@
-package minhna.android.airchannel.view.presenter;
+package minhna.android.airchannel.presenter;
 
 import android.content.Context;
 
@@ -22,11 +22,8 @@ import minhna.android.airchannel.data.net.RemoteManager;
  * Created by Minh on 11/12/2017.
  */
 
-public class PresenterMain extends BasePresenter {
+public class PresenterMain extends BaseDataPresenter {
     private IMain iMain;
-    private LocalManager localManager;
-    private RemoteManager remoteManager;
-
     public interface IMain extends BaseIView {
         void onGetFavDone(List<Channel> list, boolean fromRemote);
     }
@@ -36,18 +33,17 @@ public class PresenterMain extends BasePresenter {
         this.iMain = iMain;
     }
 
+    @Override
     public void bindComponent(LocalManager localManager, RemoteManager remoteManager) {
-        this.localManager = localManager;
-        this.remoteManager = remoteManager;
+        super.bindComponent(localManager, remoteManager);
     }
 
-    public void getFavList(FirebaseAuth mAuth) {
-        if (localManager.getProfile() != null && mAuth != null && mAuth.getCurrentUser() != null) {
+    public void getFavList() {
+        if (localManager.getProfile() != null) {
             //load from local first for better UX
             executeFavLocalLoading();
-            Query favChannelQuery = remoteManager.getFirebaseRemote().child(mAuth.getCurrentUser().getUid())
-                    .child(AK.FAV_LIST)
-                    .orderByChild(Channel.getChannelField(localManager.getProfile().getSortType()));
+            Query favChannelQuery = remoteManager.getFavChannelQuery(
+                    Channel.getChannelField(localManager.getProfile().getSortType()));
             favChannelQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -100,13 +96,15 @@ public class PresenterMain extends BasePresenter {
             remoteManager.getFirebaseRemote().addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Profile profile = dataSnapshot.child(mAuth.getCurrentUser().getUid()).getValue(Profile.class);
-                    if (profile == null)
-                        updateProfile(mAuth);
+                    Profile profile = dataSnapshot.child(mAuth.getCurrentUser().getUid())
+                            .child(AK.PROFILE).getValue(Profile.class);
+                    if (profile == null)//not on CRUD remote database yet
+                        updateProfile();
                     else {
                         localManager.setProfile(profile);
                         localManager.saveSSOId(profile.getEmail());
                         localManager.saveSortType(profile.getSortType());
+                        getFavList();
                     }
                 }
 
@@ -118,21 +116,9 @@ public class PresenterMain extends BasePresenter {
         }
     }
 
-    private void updateProfile(FirebaseAuth mAuth) {
-        remoteManager.getFirebaseRemote().child(mAuth.getCurrentUser().getUid()).setValue(localManager.getProfile());
-    }
-
-    public void updateSortType(int type, FirebaseAuth mAuth) {
-        localManager.getProfile().setSortType(type);
-        updateProfile(mAuth);
-        localManager.saveSortType(type);
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
         iMain = null;
-        localManager = null;
-        remoteManager = null;
     }
 }
