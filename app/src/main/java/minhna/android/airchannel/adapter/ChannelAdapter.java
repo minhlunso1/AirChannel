@@ -34,8 +34,8 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelV
 
     @Override
     public void onBindViewHolder(ChannelViewHolder holder, int position) {
-        final Channel channel = list.get(holder.getAdapterPosition());
-        holder.binding.setObj(new ChannelViewModel(position, channel, localManager));
+        Channel channel = list.get(holder.getAdapterPosition());
+        holder.binding.setObj(new ChannelViewModel(holder.getAdapterPosition(), channel, localManager));
     }
 
     @Override

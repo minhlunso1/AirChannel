@@ -25,6 +25,8 @@ import minhna.android.airchannel.data.local.LocalManager;
 import minhna.android.airchannel.data.net.RemoteManager;
 import minhna.android.airchannel.data.model.Channel;
 import minhna.android.airchannel.view.custom.FabSheetView;
+import minhna.android.airchannel.view.presenter.BasePresenter;
+import minhna.android.airchannel.view.presenter.PresenterChannel;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import minhna.android.airchannel.databinding.ActivityChannelBinding;
@@ -33,7 +35,7 @@ import minhna.android.airchannel.databinding.ActivityChannelBinding;
  * Created by Minh on 11/10/2017.
  */
 
-public class ChannelActivity extends BaseActivity {
+public class ChannelActivity extends BaseActivity implements PresenterChannel.IChannel {
     FabSheetView fabSheet;
 
     @Inject
@@ -42,6 +44,7 @@ public class ChannelActivity extends BaseActivity {
     LocalManager localManager;
     List<Channel> list;
     ActivityChannelBinding binding;
+    private PresenterChannel presenter;
 
     public static void go(Context context) {
         Intent intent = new Intent(context, ChannelActivity.class);
@@ -50,11 +53,17 @@ public class ChannelActivity extends BaseActivity {
     }
 
     @Override
+    protected BasePresenter initPresenter() {
+        return presenter = new PresenterChannel(this, this);
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_channel);
         ButterKnife.bind(this);
         super.onCreate(savedInstanceState);
         this.getViewComponent().inject(this);
+        presenter.bindComponent(localManager, remoteManager);
         setupView();
         loadChannels();
     }
@@ -75,43 +84,12 @@ public class ChannelActivity extends BaseActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         binding.contentChannel.rvChannel.setLayoutManager(layoutManager);
         binding.contentChannel.cvChannel.setVisibility(View.INVISIBLE);
-
-        remoteManager.getChannels()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .map(response -> {
-                    List<Channel> list = response.channels;
-                    Collections.sort(list, Channel.IDComparator);
-                    return list;
-                })
-                .takeUntil(preDestroy())
-                .doOnSubscribe(() -> binding.contentChannel.pb.show())
-                .subscribe(channels -> {
-                    binding.contentChannel.pb.hide();
-                    binding.contentChannel.cvChannel.setVisibility(View.VISIBLE);
-                    list.addAll(channels);
-                    list = formatList(list);
-                    setChannelList(list);
-                }, error -> {
-                    binding.contentChannel.pb.hide();
-                    error.printStackTrace();
-                    toggleSnackbar(true, error.getMessage());
-                });
+        presenter.loadChannelsFromServer();
     }
 
     private void setChannelList(List<Channel> list) {
         ChannelAdapter adapter = new ChannelAdapter(list, localManager);
         binding.contentChannel.rvChannel.setAdapter(adapter);
-    }
-
-    private List<Channel> formatList(List<Channel> list) {
-        for (int i = 0; i < list.size(); i++) {
-            if (localManager.getFavChannelMap().get(list.get(i).getChannelId()) == null)
-                list.get(i).imgFavRes = R.mipmap.ic_non_fav;
-            else
-                list.get(i).imgFavRes = R.mipmap.ic_on_fav;
-        }
-        return list;
     }
 
     private void toggleSnackbar(boolean toShow, String message) {
@@ -167,5 +145,24 @@ public class ChannelActivity extends BaseActivity {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void onLoadChannelDone(List<Channel> channels, boolean fromRemote) {
+        binding.contentChannel.pb.hide();
+        binding.contentChannel.cvChannel.setVisibility(View.VISIBLE);
+        list.addAll(channels);
+        setChannelList(list);
+    }
+
+    @Override
+    public void onLoadingChannel() {
+        binding.contentChannel.pb.show();
+    }
+
+    @Override
+    public void onError(String error) {
+        binding.contentChannel.pb.hide();
+        toggleSnackbar(true, error);
     }
 }

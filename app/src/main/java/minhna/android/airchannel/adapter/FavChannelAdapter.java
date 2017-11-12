@@ -36,8 +36,8 @@ public class FavChannelAdapter extends RecyclerView.Adapter<FavChannelAdapter.Ch
 
     @Override
     public void onBindViewHolder(ChannelViewHolder holder, int position) {
-        final Channel channel = list.get(holder.getAdapterPosition());
-        holder.binding.setObj(new FavViewModel(position, channel, localManager, iFavViewMode));
+        Channel channel = list.get(holder.getAdapterPosition());
+        holder.binding.setObj(new FavViewModel(holder.getAdapterPosition(), channel, localManager, iFavViewMode));
     }
 
     @Override

@@ -134,4 +134,9 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.delete(FAV_CHANNEL_TABLE_NAME, FAV_COLUMN_CHANNEL_ID + "=" + id, null) > 0;
     }
+
+    public int deleteAllChannels() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.delete(FAV_CHANNEL_TABLE_NAME, "1", null);
+    }
 }

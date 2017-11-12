@@ -39,16 +39,20 @@ import minhna.android.airchannel.R;
 import minhna.android.airchannel.adapter.FavChannelAdapter;
 import minhna.android.airchannel.data.local.LocalManager;
 import minhna.android.airchannel.data.model.Channel;
+import minhna.android.airchannel.data.model.Profile;
+import minhna.android.airchannel.data.model.SortType;
 import minhna.android.airchannel.data.net.RemoteManager;
 import minhna.android.airchannel.view.custom.FabSheetView;
+import minhna.android.airchannel.view.presenter.BasePresenter;
+import minhna.android.airchannel.view.presenter.PresenterMain;
 import minhna.android.airchannel.viewmodel.FavViewModel;
 
 /**
- * In this test, I want to make it simple so I do not bind Activity with ViewModel.
+ * In this test, I want to make it simple so I do not bind Activity with ViewModel and use MVP instead.
  * Prefer to use android.arch.lifecycle library for MVVM in real project.
  */
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,
-        FavViewModel.IFavViewMode{
+        FavViewModel.IFavViewMode, PresenterMain.IMain {
     private final int RC_SIGN_IN = 100;
 
     @BindView(R.id.fab)
@@ -73,11 +77,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     RemoteManager remoteManager;
     @Inject
     LocalManager localManager;
-    private List<Channel> list;
+    private List<Channel> list = new ArrayList<>();
     private FavChannelAdapter adapter;
     private MenuItem navSSOAction;
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
+    private PresenterMain presenter;
+
+    @Override
+    protected BasePresenter initPresenter() {
+        return presenter = new PresenterMain(this, this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,17 +95,29 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         ButterKnife.bind(this);
         super.onCreate(savedInstanceState);
         this.getViewComponent().inject(this);
+        presenter.bindComponent(localManager, remoteManager);
 
         setupView();
+        setupProfileFromLocal();
         setupGoogleSSO();
+    }
+
+    //I load local data for better UX in case of slow net speed
+    private void setupProfileFromLocal() {
+        if (localManager.getSSOId() != null) {
+            localManager.setProfile(new Profile(localManager.getSSOId(), localManager.getSortType()));
+            tvSSOInfo.setText(localManager.getSSOId());
+            navSSOAction.setTitle(R.string.action_sign_out);
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (mAuth != null) {
+        if (mAuth != null && mAuth.getCurrentUser() != null) {
             FirebaseUser currentUser = mAuth.getCurrentUser();
             updateSSOUI(currentUser);
+            presenter.setupProfile(mAuth);
         }
     }
 
@@ -103,7 +125,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onResume() {
         super.onResume();
         setupEvents();
-        setupFavList();
+        presenter.getFavList(mAuth);
     }
 
     @Override
@@ -129,12 +151,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     hideProgressDialog();
                     if (task.isSuccessful()) {
                         showSnackbar(fab, getString(R.string.alert_sign_in_successfully), Snackbar.LENGTH_SHORT);
-                        updateSSOUI(mAuth.getCurrentUser());
+                        clearFavData(mAuth.getCurrentUser());
+                        presenter.setupProfile(mAuth);
                     } else
                         showSnackbar(fab, task.getException().getMessage(), Snackbar.LENGTH_INDEFINITE);
                 });
     }
 
+    private void clearFavData(FirebaseUser firebaseUser) {
+        localManager.clearData();
+        list.clear();
+        setChannelList(list);
+        updateFavView(list.size(), false);
+        updateSSOUI(firebaseUser);
+    }
 
     private void updateSSOUI(FirebaseUser currentUser) {
         if (currentUser == null) {
@@ -156,6 +186,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void setupView() {
+        rvFav.setLayoutManager(new LinearLayoutManager(this));
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -167,21 +198,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         navSSOAction = navMenu.findItem(R.id.nav_sso);
     }
 
-    private void setupFavList() {
-        list = new ArrayList<>();
-        list = localManager.getFavChannelList();
-        for (Channel tmp:list)
-            localManager.getFavChannelMap().put(tmp.getChannelId(), tmp);
-        updateFavView(list.size());
-    }
-
-    private void updateFavView(int size) {
+    private void updateFavView(int size, boolean whenRemove) {
         if (size > 0) {
             cvFav.setVisibility(View.VISIBLE);
             fab.setVisibility(View.VISIBLE);
 
-            rvFav.setLayoutManager(new LinearLayoutManager(this));
-            setChannelList(list);
+            if (!whenRemove)
+                setChannelList(list);
         } else {
             cvFav.setVisibility(View.GONE);
             fab.setVisibility(View.GONE);
@@ -202,6 +225,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 View sortName = sheet.findViewById(R.id.v2);
 
                 sortId.setOnClickListener(v1 -> {
+                    if (mAuth != null && mAuth.getCurrentUser() != null && localManager.getProfile() != null)
+                        presenter.updateSortType(SortType.ID, mAuth);
                     if (fabSheet != null)
                         fabSheet.dismiss();
                     canFinishMain = true;
@@ -209,6 +234,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     setChannelList(list);
                 });
                 sortName.setOnClickListener(v1 -> {
+                    if (mAuth != null && mAuth.getCurrentUser() != null && localManager.getProfile() != null)
+                        presenter.updateSortType(SortType.NAME, mAuth);
                     if (fabSheet != null)
                         fabSheet.dismiss();
                     canFinishMain = true;
@@ -244,11 +271,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, RC_SIGN_IN);
             } else {
-                if (mAuth != null) {
-                    mAuth.signOut();
+                    FirebaseAuth.getInstance().signOut();
                     showSnackbar(fab, getString(R.string.alert_signed_out), Snackbar.LENGTH_SHORT);
-                    updateSSOUI(null);
-                }
+                    clearFavData(null);
             }
         }
 
@@ -264,8 +289,25 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     public void onRemoveFav(int channelId, int position) {
         if (list.get(position).getChannelId() == channelId) {
+            //to make adapter get right position after remove
             list.remove(position);
             adapter.notifyItemRemoved(position);
+            adapter.notifyItemRangeChanged(position, list.size());
+            //
+            updateFavView(list.size(), true);
         }
+    }
+
+    @Override
+    public void onGetFavDone(List<Channel> newList, boolean fromRemote) {
+        if (fromRemote && list != null && list.size() == newList.size())
+            return;
+        this.list = newList;
+        updateFavView(list.size(), false);
+    }
+
+    @Override
+    public void onError(String message) {
+        showSnackbar(fab, message, Snackbar.LENGTH_INDEFINITE);
     }
 }

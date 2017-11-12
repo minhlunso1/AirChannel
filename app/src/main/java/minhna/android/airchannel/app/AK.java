@@ -6,4 +6,6 @@ package minhna.android.airchannel.app;
 
 public class AK {
     public static final String SSO_ID = "sso_id";
+    public static final String SORT_TYPE = "sort_type";
+    public static final String FAV_LIST = "fav_list";
 }

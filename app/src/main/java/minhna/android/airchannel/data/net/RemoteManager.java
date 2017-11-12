@@ -1,5 +1,8 @@
 package minhna.android.airchannel.data.net;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -13,6 +16,7 @@ import rx.Single;
 @Singleton
 public class RemoteManager {
     private final RemoteInterface remoteInterface;
+    private DatabaseReference firebaseRemote;
 
     @Inject
     public RemoteManager(RemoteInterface remoteInterface) {
@@ -21,5 +25,13 @@ public class RemoteManager {
 
     public Single<ChannelResponse> getChannels() {
         return remoteInterface.getChannels();
+    }
+
+    public DatabaseReference getFirebaseRemote() {
+        if (firebaseRemote == null) {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            firebaseRemote = FirebaseDatabase.getInstance().getReference();
+        }
+        return firebaseRemote;
     }
 }
