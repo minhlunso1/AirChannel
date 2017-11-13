@@ -9,10 +9,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import minhna.android.airchannel.app.AK;
-import minhna.android.airchannel.data.local.LocalManager;
 import minhna.android.airchannel.data.model.Channel;
 import minhna.android.airchannel.data.model.ChannelResponse;
+import minhna.android.airchannel.data.model.EventResponse;
 import minhna.android.airchannel.data.model.Profile;
+import rx.Observable;
 import rx.Single;
 
 /**
@@ -33,6 +34,10 @@ public class RemoteManager {
 
     public Single<ChannelResponse> getChannels() {
         return remoteInterface.getChannels();
+    }
+
+    public Observable<EventResponse> getEvents(String channelIds, String start, String end) {
+        return remoteInterface.getEvents(channelIds, start, end);
     }
 
     public DatabaseReference getFirebaseRemote() {

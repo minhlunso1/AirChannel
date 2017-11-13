@@ -39,6 +39,7 @@ public class OnAirActivity extends BaseActivity implements PresenterOnAir.IOnAir
     private List<Event> list;
     private PresenterOnAir presenter;
     ActivityOnairBinding binding;
+    EventAdapter adapter;
 
     @Override
     protected BasePresenter initPresenter() {
@@ -77,7 +78,7 @@ public class OnAirActivity extends BaseActivity implements PresenterOnAir.IOnAir
                         fabSheet.dismiss();
                     canFinishMain = true;
                     Collections.sort(list, Event.IDComparator);
-                    setEventList(list);
+                    adapter.notifyDataSetChanged();
                 });
                 sortName.setOnClickListener(v1 -> {
                     if (localManager.getProfile() != null)
@@ -86,7 +87,7 @@ public class OnAirActivity extends BaseActivity implements PresenterOnAir.IOnAir
                         fabSheet.dismiss();
                     canFinishMain = true;
                     Collections.sort(list, Event.NameComparator);
-                    setEventList(list);
+                    adapter.notifyDataSetChanged();
                 });
             } else
                 fabSheet.show();
@@ -100,22 +101,32 @@ public class OnAirActivity extends BaseActivity implements PresenterOnAir.IOnAir
     }
 
     @Override
-    public void onLoadShowDone(List<Event> events, boolean fromRemote) {
+    public void onLoadShowDone(List<Event> events, boolean firstTime) {
         binding.contentOnair.pb.hide();
         list.clear();
         list.addAll(events);
-        setEventList(list);
+        if (firstTime)
+            setEventList(list);
+        else
+            adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onAppendShow(List<Event> events) {
+        int pos = list.size() - 1;
+        list.addAll(events);
+        adapter.notifyItemRangeChanged(0, list.size() - 1);
     }
 
     private void loadEvents() {
         list = new ArrayList<>();
         binding.contentOnair.rvOnair.setLayoutManager(
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        presenter.loadEventsFromServer();
+        presenter.doLoadEventSequences();
     }
 
     private void setEventList(List<Event> list) {
-        EventAdapter adapter = new EventAdapter(list);
+        adapter = new EventAdapter(list);
         binding.contentOnair.rvOnair.setAdapter(adapter);
     }
 

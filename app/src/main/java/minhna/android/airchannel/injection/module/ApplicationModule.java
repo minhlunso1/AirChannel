@@ -62,7 +62,7 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
-    RemoteInterface provideBourbonService() {
+    RemoteInterface provideRemoteInterface() {
         return RemoteFactory.buildRemoteInterface();
     }
 

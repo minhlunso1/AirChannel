@@ -16,7 +16,7 @@
     <dimen name="activity_horizontal_margin_largest">56dp</dimen>
     <dimen name="activity_horizontal_margin_huge">64dp</dimen>
     <dimen name="activity_horizontal_margin_huger">72dp</dimen>
-    <dimen name="activity_horizontal_margin_hugest">86dp</dimen>
+    <dimen name="activity_horizontal_margin_hugest">82dp</dimen>
     <dimen name="divider_dimen">5dp</dimen>
     <dimen name="item_textview">18sp</dimen>
     <dimen name="item_textview_normal">16sp</dimen>
@@ -40,4 +40,5 @@
     <dimen name="card_elevation">5dp</dimen>
     <dimen name="item_size_largest">160dp</dimen>
     <dimen name="item_size_header">120dp</dimen>
+    <dimen name="padding_less_normal">10dp</dimen>
 </resources>

@@ -34,8 +34,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     @Override
     public void onBindViewHolder(EventViewHolder holder, int position) {
         Event event = list.get(holder.getAdapterPosition());
-        holder.binding.setObj(new EventViewModel(holder.getAdapterPosition(),
-                UIUtil.getColorRes(colorJump++), event));
+        event.color = UIUtil.getColorRes(colorJump++);
+        holder.binding.setObj(new EventViewModel(holder.getAdapterPosition(), event));
         if (colorJump == UIUtil.MAX_JUMP)
             colorJump = 0;
     }
