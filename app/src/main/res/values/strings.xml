@@ -24,4 +24,7 @@
     <string name="alert_signed_out">Signed out</string>
     <string name="suggest_update_google">Please update Google Service</string>
     <string name="suggest_check_network">Please check your network</string>
+    <string name="toolbar_title">toolbar_title</string>
+    <string name="author_linkedin">https://www.linkedin.com/in/minhlunso1</string>
+    <string name="action_send_email">Send email</string>
 </resources>

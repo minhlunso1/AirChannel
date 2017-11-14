@@ -1,5 +1,6 @@
 package minhna.android.airchannel.view;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -18,6 +21,7 @@ import minhna.android.airchannel.injection.component.DaggerViewComponent;
 import minhna.android.airchannel.injection.component.ViewComponent;
 import minhna.android.airchannel.injection.module.ActivityModule;
 import minhna.android.airchannel.presenter.BasePresenter;
+import minhna.android.airchannel.util.UIUtil;
 import rx.subjects.BehaviorSubject;
 
 /**
@@ -108,5 +112,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         Intent intent = new Intent(context, activity);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    public void transitionToActivity(Class target, View fromView, int stringId, Activity activity) {
+        final Pair<View, String>[] pairs = UIUtil.createSafeTransitionParticipants(activity, false,
+                new Pair<>(fromView, activity.getString(stringId)));
+        startActivityWithSharedElement(target, pairs, activity);
+    }
+
+    private void startActivityWithSharedElement(Class target, Pair<View, String>[] pairs, Activity activity) {
+        Intent i = new Intent(activity, target);
+        ActivityOptionsCompat transitionActivityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(i, transitionActivityOptions.toBundle());
     }
 }

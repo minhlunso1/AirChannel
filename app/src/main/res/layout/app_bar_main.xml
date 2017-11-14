@@ -27,7 +27,9 @@
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
                 android:textSize="@dimen/title_size"
-                android:id="@+id/toolbar_title" />
+                android:id="@+id/toolbar_title"
+                android:transitionName="@string/toolbar_title"
+                tools:targetApi="lollipop" />
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

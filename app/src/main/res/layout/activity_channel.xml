@@ -29,6 +29,7 @@
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
                     android:textSize="@dimen/title_size"
+                    android:transitionName="@string/toolbar_title"
                     android:id="@+id/toolbar_title" />
             </android.support.v7.widget.Toolbar>
 

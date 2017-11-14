@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <data/>
@@ -29,7 +30,9 @@
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
                     android:textSize="@dimen/title_size"
-                    android:id="@+id/toolbar_title" />
+                    android:id="@+id/toolbar_title"
+                    android:transitionName="@string/toolbar_title"
+                    tools:targetApi="lollipop" />
             </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.AppBarLayout>
