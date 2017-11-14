@@ -31,4 +31,4 @@ Complete all three level requirements
 - Authenticated users have their own data on cloud.
 
 ## Walkthrough
-  ![screenshot](airchanel.gif)
+  ![screenshot](airchannel.gif)
