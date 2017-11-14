@@ -4,7 +4,7 @@ Submitted by: **Minh Nguyen**
 
 Time spent: 55 hours spent in total
 
-##Citation
+## Citation
 - Material Design with layouts and icons.
 - MVP framework architecture.
 - MVVM for list item.
