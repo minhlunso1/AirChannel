@@ -123,7 +123,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void startActivityWithSharedElement(Class target, Pair<View, String>[] pairs, Activity activity) {
         Intent i = new Intent(activity, target);
         ActivityOptionsCompat transitionActivityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(i, transitionActivityOptions.toBundle());
     }
 }

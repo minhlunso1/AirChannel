@@ -50,13 +50,13 @@ public class ChannelViewModel extends BaseViewModel {
         return view -> {
             try {
                 if (getImgFavRes() == R.mipmap.ic_on_fav) {
-                    if (localManager.deleteChannel(getChannelId())) {
-                        localManager.getFavChannelMap().remove(getChannelId());
+                    localManager.deleteChannel(getChannelId());
+                    localManager.getFavChannelMap().remove(getChannelId());
+                    if (localManager.getProfile() != null)
                         remoteManager.removeFavoriteChannel(String.valueOf(channel.getChannelId()));
-                        setImgFavRes(R.mipmap.ic_non_fav);
-                    }
+                    setImgFavRes(R.mipmap.ic_non_fav);
                 } else if (getImgFavRes() == R.mipmap.ic_non_fav) {
-                    remoteManager.insertChannel(channel);
+                    if (localManager.getProfile() != null) remoteManager.insertChannel(channel);
                     localManager.insertChannel(channel);
                     localManager.getFavChannelMap().put(getChannelId(), channel);
                     setImgFavRes(R.mipmap.ic_on_fav);

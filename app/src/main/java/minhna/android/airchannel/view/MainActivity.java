@@ -1,14 +1,10 @@
 package minhna.android.airchannel.view;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
+import android.net.Uri;;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -229,20 +225,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         //Faster when start activity from outsite activity so I use RxBinding
         RxView.clicks(rlChannel)
                 .takeUntil(preDestroy())
-                .subscribe(aVoid -> {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                        transitionToActivity(ChannelActivity.class, tvChannel, R.string.toolbar_title, this);
-                    else
-                        startNewTaskWith(this, ChannelActivity.class);
-                });
+                .subscribe(aVoid -> startNewTaskWith(this, ChannelActivity.class));
         RxView.clicks(cvTVGuide)
                 .takeUntil(preDestroy())
-                .subscribe(aVoid -> {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                        transitionToActivity(OnAirActivity.class, tvOnAir, R.string.toolbar_title, this);
-                    else
-                        startNewTaskWith(this, OnAirActivity.class);
-                });
+                .subscribe(aVoid -> startNewTaskWith(this, OnAirActivity.class));
         fab.setOnClickListener(view -> {
             canFinishMain = false;
             if (fabSheet == null) {
@@ -302,6 +288,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     FirebaseAuth.getInstance().signOut();
                     showSnackbar(fab, getString(R.string.alert_signed_out), Snackbar.LENGTH_SHORT);
                     clearFavData(null);
+                    canGetList = true;
             }
         } else if (id == R.id.nav_name) {
             Intent i = new Intent(Intent.ACTION_VIEW);

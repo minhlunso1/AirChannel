@@ -46,11 +46,11 @@ public class FavViewModel extends BaseViewModel {
     public View.OnClickListener onRemoveClick() {
         return view -> {
             try {
-                if (localManager.deleteChannel(getChannelId())) {
-                    localManager.getFavChannelMap().remove(getChannelId());
+                localManager.deleteChannel(getChannelId());
+                localManager.getFavChannelMap().remove(getChannelId());
+                if (localManager.getProfile() != null)
                     remoteManager.removeFavoriteChannel(String.valueOf(channel.getChannelId()));
-                    iFavViewMode.onRemoveFav(getChannelId(), position);
-                }
+                iFavViewMode.onRemoveFav(getChannelId(), position);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -102,7 +102,8 @@ public class OnAirActivity extends BaseActivity implements PresenterOnAir.IOnAir
 
     @Override
     public void onLoadShowDone(List<Event> events, boolean firstTime) {
-        binding.contentOnair.pb.hide();
+        if (events.size() > 0)
+            binding.contentOnair.pb.hide();
         list.clear();
         list.addAll(events);
         if (firstTime)
@@ -113,9 +114,11 @@ public class OnAirActivity extends BaseActivity implements PresenterOnAir.IOnAir
 
     @Override
     public void onAppendShow(List<Event> events) {
-        int pos = list.size() - 1;
-        list.addAll(events);
-        adapter.notifyItemRangeChanged(0, list.size() - 1);
+        if (events.size() > 0) {
+            binding.contentOnair.pb.hide();
+            list.addAll(events);
+            adapter.notifyItemRangeChanged(0, list.size() - 1);
+        }
     }
 
     private void loadEvents() {
